@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>0104.整体结构</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function() {
+            //缓存全局变量this， 可能是window
+            var root = this;
+            //定义_构造函数
+            var _ = function(obj){
+                if(obj instanceof _){
+                    return obj;
+                }
+                if(!(this instanceof _)){
+                    return new _(obj);
+                }
+                this._wrapped = obj;
+            };
+            root._ = _;
+        }.call(this));
+        var res = _([1,2,3]);
+        console.log(res);
+        //res 是
+        /*
+	{
+		_wrapped: [1,2,3]
+		__proto__:{
+			constructor: function
+			__proto__: Object.prototype
+		}
+
+	}
+        */
+    </script>
+</head>
+<body>
+    <h3>Underscore.js整体结构：</h3>
+    <pre>
+        //使用了3种自运行匿名函数之一 (function().call());
+        (function(){
+            //缓存全局变量this， 可能是window
+            var root = this;
+
+            //定义_构造函数
+            var _ = function(obj){
+                if(obj instanceof _){
+                    return obj;
+                }
+                if(!(this instanceof _)){
+                    return new _(obj);
+                }
+                this._wrapped = obj;
+            }
+
+            //把_挂载到 全局变量上了，这样，让匿名函数外，可访问_了
+            root._ = _;
+        }.call(this));
+    </pre>
+    <pre>
+    	var res = _([1,2,3]);
+	//_构造函数的运行过程
+	1. 参数obj为 [1,2,3]
+	2.  if(obj instanceof _) 不成真
+	3.  if(!(this instanceof _))
+		//这时this是指window（在浏览器端）
+		// window instanceof _  是false
+		//！false  是 true
+		//所以条件成真，
+	4. 运行 return new _(obj);
+		//再次进入_的构造函数了
+		// new _(obj)   obj为 [1,2,3]
+		// 重复2 条件还是  false
+		// 重复3  这时this指 _的实例对象，
+			// this instanceof _ 为true
+			//!true 为false，所以第二个if不进入,执行 this._wrapped  = obj
+		// return this,即_的实例对象，因为是new 操作
+
+    </pre>
+</body>
+</html>
