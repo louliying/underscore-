@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>12.21.1自运行匿名函数</title>
+</head>
+<body>
+    <script>
+            //第一种
+            (function(){
+                var str = "第一种自运行匿名函数";
+                var fn1 = function(){
+                    console.log(str);
+                };
+                fn1();
+            })();
+            console.log("函数外调用匿名函数内的变量");
+            console.log(str);  //str is not defined
+    </script>
+
+    <script>
+        //第二种
+        (function(){
+            var str = "第二种自运行匿名函数";
+            var fn2 = function(){
+                console.log(str);
+            };
+            fn2();
+        }.call(this));
+        console.log("函数外调用匿名函数内的变量");
+        //console.log(str);  //str is not defined
+        // --------//
+        //也可以这样
+        (function(){
+            var str = "第二种自运行匿名函数2";
+            var fn2 = function(){
+                console.log(str);
+            };
+            fn2();
+        }());
+        console.log("函数外调用匿名函数内的变量");
+        console.log(str);  //str is not defined
+    </script>
+    <script>
+            //第三种
+            !function(){
+                var str = "第三种自运行匿名函数";
+                var fn3 = function(){
+                    console.log(str);
+                };
+                fn3();
+            }();
+            console.log("函数外调用匿名函数内的变量");
+            console.log(str);  //str is not defined
+    </script>
+    <h3>3种匿名自运行函数：</h3>
+    <pre>
+        //第一种
+            (function(){
+                var str = "第一种自运行匿名函数";
+                var fn1 = function(){
+                    console.log(str);
+                };
+                fn1();
+            })();
+            console.log("函数外调用匿名函数内的变量");
+            console.log(str);  //str is not defined
+    </pre>
+    <p>underscore，选用了下面这种。</p>
+    <pre>
+        //第二种
+        (function(){
+            var str = "第二种自运行匿名函数";
+            var fn2 = function(){
+                console.log(str);
+            };
+            fn2();
+        }.call(this));
+        console.log("函数外调用匿名函数内的变量");
+        //console.log(str);  //str is not defined
+        // --------//
+        //也可以这样
+        (function(){
+            var str = "第二种自运行匿名函数2";
+            var fn2 = function(){
+                console.log(str);
+            };
+            fn2();
+        }());
+        console.log("函数外调用匿名函数内的变量");
+        console.log(str);  //str is not defined
+    </pre>
+    <pre>
+         //第三种
+            !function(){
+                var str = "第三种自运行匿名函数";
+                var fn3 = function(){
+                    console.log(str);
+                };
+                fn3();
+            }();
+            console.log("函数外调用匿名函数内的变量");
+            console.log(str);  //str is not defined
+    </pre>
+</body>
+</html>
