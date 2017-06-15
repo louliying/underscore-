@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170615._挂载到全局</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function(){
+            var a = '我只存在于匿名函数内部';
+            console.log('在匿名函数内部的a:' + a);
+            window.a = a;
+        }.call(this));
+        console.log('在匿名函数外部的a:' + a);
+    </script>
+    <script>
+        // underscore的绑定全局
+        (function(){
+            var root = this; //这里的this，浏览器里指window 浏览器里为exports
+
+            var _ = function(){};
+
+            if (typeof exports !== 'undefined') {
+                if (typeof module !== 'undefined' && module.exports) {
+                    exports = module.exports = _;
+                }
+                exports._ = _;
+            } else {
+                root._ = _;
+            }
+        }.call(this));
+        console.log('匿名函数外的_:'  + _);
+    </script>
+</head>
+<body>
+    <h3>_变量挂载到全局</h3>
+    <p>在自运行匿名函数里，定义了var _ = function(){....}后，_的作用域只存于匿名函数内部。</p>
+    <pre>
+         (function(){
+            var a = '我只存在于匿名函数内部';
+            console.log('在匿名函数内部的a:' + a);
+            // 如果 不加这名， 匿名函数外是访问不到a 的。
+            window.a = a;
+        }.call(this));
+        console.log('在匿名函数外部的a:' + a);
+    </pre>
+    <p>浏览器端的全局是window。node的全局是global。</p>
+    <p>underscore因为，不仅仅是运行在浏览器端的。</p>
+    <pre>
+         // underscore的绑定全局
+        (function(){
+            var root = this; //这里的this，浏览器里指window 浏览器里为exports
+
+            var _ = function(){};
+
+            if (typeof exports !== 'undefined') {
+                if (typeof module !== 'undefined' && module.exports) {
+                    exports = module.exports = _;
+                }
+                exports._ = _;
+            } else {
+                root._ = _;
+            }
+        }.call(this));
+        console.log('匿名函数外的_:'  + _);
+    </pre>
+</body>
+</html>
