@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170616_1noConflict松弛绑定</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <p>默认下， underscore对象把“_”挂载到全局。</p>
+    <p>但如果全局已经有"_"对象了呢？</p>
+    <p>用户可以用underscore的noConflict函数，来把"_"对象让出来了。</p>
+    <pre>
+        <script src='...underscore.js'></script>
+        // 把underscore的全局"_"对象，挂载到underscore2变量上， 后面就用这个变量来使用。
+        var underscore2 = _.noConflict();
+
+        underscore2.map(.....);
+    </pre>
+
+    <p>noConflict的源码实现：</p>
+    <pre>
+            // 将全局的"_"变量缓存起来
+            var previousUnderscore = root._;
+            ....
+            _.noConflict = function () {
+                // 回复原来指代的对象， 即原来root._指的是别的类库已存在的“_"对象。
+                // 现在，把root._用来指定别的类库的"_"对象，即，把全局"_"让出来。
+                root._ = prevousUnderscore;
+
+                // 返回underscore对象， 让新的underscore变量，可继续使用
+                return this;
+            }
+    </pre>
+</body>
+</html>
