@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170619_Ctor</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // 创建 一个空函数
+        // 在没有支持ES5的Object.create()前，对象obj2要继承对象obj1，是怎么写的？
+
+        var Ctor = function() {}
+
+        var baseCreate = function (prototype) {
+            // 判断prototype是否是一个对象
+            if (!_.isObject(prototype)){
+                return {};
+            }
+            // var nativeCreate = Object.create
+            // 如果 支持ES5，就用ES5，原生。
+            if (nativeCreate) {
+                return nativeCreate(prototype);
+            }
+
+            // 每一个函数（如Ctor），都有一个prototype属性，指向函数的原型对象（即 Ctor.prorotype）。
+            // 这个原型对象上，会自动有一个contructor属性，指向该函数（Ctor）。
+            Ctor.prototype = prototype;
+            var result = new Ctor;
+
+            Ctor.prototype = null;
+            return result;
+        }
+
+        var _.create = function(prototype, props) {
+            var result = baseCreate(prototype);
+            if (props) {
+                _extendOwn(result, props);
+            }
+            return result;
+        }
+    </script>
+    <script>
+
+    </script>
+</head>
+<body>
+    <h3>在没有支持ES5的Object.create()前，对象obj2要继承对象obj1，是怎么写的？</h3>
+    <p>在红皮书，第六章， 6.3.4里的 “原型式继承"里：</p>
+    <pre>
+        function object(o) {
+            // 创建 一个空函数
+            function F() {}
+            F.prototype = o;
+            return new F();
+        }
+
+        var person = {
+            name: 'cindy',
+            age: 20
+        };
+
+        var person2 = object(person);
+        person2.name = "loulou";
+        console.log(person2.age); // 20
+    </pre>
+    <p>new 操作符的用处：</p>
+    <ul>
+        <li>1. 创建一个新的对象</li>
+        <li>2. 将构造函数的作用域赋给新对象（因此this就指向了这个新对象）</li>
+        <li>3. 执行构造函数中的代码（为这个新对象添加新属性）</li>
+        <li>4. 返回新对象</li>
+    </ul>
+    <p>&nbsp;</p>
+    <h3>ES5的Object.create()</h3>
+    <pre>
+            var person = {
+                name: 'cindy',
+                age: 20
+            };
+            var person2 = Object.create(person);
+            person2.name = "loulou";
+            console.log(person2.age); // 20
+
+            var person3 = Object.create(person, {
+                name: 'louliying'
+            });
+            console.log(person3.name); //louliying
+    </pre>
+    <p>无论是空函数，还是Object.create，它们都要求 一个对象类型的参数。</p>
+    <h3>underscore中的源码：</h3>
+    <pre>
+        // 创建一个空函数
+        var Ctor = function() {}
+
+        // Ctor的使用例子
+        var baseCreate = function (prototype) {
+            // 判断prototype是否是一个对象
+            if (!_.isObject(prototype)){
+                return {};
+            }
+            // var nativeCreate = Object.create
+            // 如果 支持ES5，就用ES5，原生。
+            if (nativeCreate) {
+                return nativeCreate(prototype);
+            }
+
+            // 每一个函数（如Ctor），都有一个prototype属性，指向函数的原型对象（即 Ctor.prorotype）。
+            // 这个原型对象上，会自动有一个contructor属性，指向该函数（Ctor）。
+            Ctor.prototype = prototype;
+            var result = new Ctor;
+
+            Ctor.prototype = null;
+            return result;
+        }
+
+        // baseCreate的使用例子
+        var _.create = function(prototype, props) {
+            var result = baseCreate(prototype);
+            if (props) {
+                _extendOwn(result, props);
+            }
+            return result;
+        }
+    </pre>
+</body>
+</html>
