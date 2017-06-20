@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>为什么用 `void 0` 代替 `undefined`</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+            //undefined在低版本下能被修改
+            var undefined = 10;
+            console.log(undefined); //Chrome undefined, IE9 10,  IE8 10, IE7 10, FF undefined.
+
+            var a = void (1+1);
+            console.log(a); // undefined
+    </script>
+</head>
+<body>
+    <h3>undefined哪里不好：</h3>
+    <p>undefined不可靠：会被改写</p>
+    <ol>
+        <li>
+            <p>1. 全局被改：undefined不是保留词(reserved word)，只是全局对象的一个属性， <strong>在低版本IE中能被重写</strong>。</p>
+            <pre>
+                var undefined  = 10;
+                //Chrome undefined, IE9 10,  IE8 10, IE7 10, FF undefined.
+                console(undefined);
+            </pre>
+        </li>
+        <li>
+            <p>2.局部被改：undefined在ES5中，定义为全局对旬的一个只读属性，不能被重写。但在局部作用域中，还是能被重写的。</p>
+            <pre>
+                    (function() {
+                          // 定义一个局部变量undefined
+                          var undefined = 10;
+                          // 10 -- chrome
+                          alert(undefined);
+                    })();
+
+                    (function() {
+                          //定义 全局变量undefined
+                          undefined = 10;
+                          // undefined -- chrome
+                          alert(undefined);
+                    })();
+            </pre>
+        </li>
+    </ol>
+    <h3>如何硬解undefined被改？</h3>
+    <pre>
+        // 在 JavaScript 中，假设我们想判断一个是否是 undefined，那么我们通常会这样写
+        if (a === undefined){
+            ....
+        }
+    </pre>
+    <p>一. void运算符：</p>
+    <ul>
+        <li>
+            <p>MDN对void的解释：The void operator evaluates the given expression and then returns undefined.</p>
+            <p>意思是void操作符对后面的表达式求值，然后返回undefined.</p>
+            <p>也就是，void后面不管是什么，都返回undefined.那什么是最短的， 0啊。</p>
+            <p>viod 0;  或 viod(0);</p>
+            <pre>
+                var a = void (1+1);
+                console.log(a); //undefined
+            </pre>
+            <p>更重要的前提是，<strong>void 是不能被重写的</strong>（cannot be overidden）。</p>
+            <p>void 0， 比undefined少几个字符呢。</p>
+            <p>所以在underscore里， 需要用到undefined的地方，都是用<strong>viod 0</strong> 来替代。</p>
+        </li>
+    </ul>
+    <p>二. JQ的方法:</p>
+    <pre>
+        (function(window, undefined) {
+            // 形参里有undefined,  实参里，却没有传入
+            // 所有，在这里面的作用域里， undefined都是受信任的undefined.
+            ....
+        })(window);
+    </pre>
+</body>
+</html>
