@@ -26,6 +26,7 @@
             Ctor.prototype = prototype;
             var result = new Ctor;
 
+            // 防止内存泄露
             Ctor.prototype = null;
             return result;
         }
@@ -86,12 +87,16 @@
             console.log(person3.name); //louliying
     </pre>
     <p>无论是空函数，还是Object.create，它们都要求 一个对象类型的参数。</p>
+    <h3>原型继承和Object.create()的区别：</h3>
+    <p>1. 使用new运算符最大的限制：被new运算的只能是一个<strong>构造函数</strong>。不然会报错。</p>
+    <p>2. Object.creat()，可以是普通的对象。它支持第二个参数。</p>
     <h3>underscore中的源码：</h3>
     <pre>
         // 创建一个空函数
         var Ctor = function() {}
 
         // Ctor的使用例子
+        // 只做了原型继承，没有Object.create()的属性传递功能
         var baseCreate = function (prototype) {
             // 判断prototype是否是一个对象
             if (!_.isObject(prototype)){
@@ -106,6 +111,7 @@
             // 每一个函数（如Ctor），都有一个prototype属性，指向函数的原型对象（即 Ctor.prorotype）。
             // 这个原型对象上，会自动有一个contructor属性，指向该函数（Ctor）。
             Ctor.prototype = prototype;
+            // 创建一个临时对象  result.__proto__ = prototype
             var result = new Ctor;
 
             Ctor.prototype = null;
