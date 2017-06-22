@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>短路表达式</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+            var foo,
+                  num = 1,
+                  str = "string",
+                  obj = {},
+                  arr = [];
+            console.log("typeof foo:" + typeof(foo));  // undefined
+            console.log("typeof num:" + typeof(num));　　//number
+            console.log("typeof str:" + typeof(str));　　//string
+            console.log("typeof obj:" + typeof(obj));　　//object　　
+            console.log("typeof arr:" + typeof(arr));　　//object
+
+            console.log("typeof !!foo:" +  typeof(!!foo) + "\t!!undefined的值：" + (!!foo));  // boolean   false
+            console.log("typeof !!num:" + typeof(!!num) + "\t!!1的值：" + (!!num));　　//boolean     true
+            console.log("typeof !!str:" + typeof(!!str) + "\t!!string的值：" + (!!str));　　//boolean        true
+            console.log("typeof !!obj:" + typeof(!!obj) + "\t!!{}的值：" + (!!obj));　　//boolean            true
+            console.log("typeof !!arr:" + typeof(!!arr) + "\t!![]的值：" + (!!arr));　　//boolean                true
+    </script>
+</head>
+<body>
+    <p>underscore里，有很多条件判断，3元运算符用的超级多。到处是短路表达式。</p>
+    <h3>什么是短路表达式？</h3>
+    <p>作为<strong>"&&"</strong>和<strong>"||"</strong>操作符的操作数表达式，这些表达式在进行求值时，只要最终的结果已经可以确定是真或假，求值过程便告终止，这称之为<strong>短路求值</strong>。</p>
+    <pre>
+        foo = foo || bar;
+        //如果foo存在，就是foo = foo
+        // 如果 foo不存在， 就是foo = bar
+        //等同于下面的代码
+        if(!foo){
+            foo = bar;
+        }
+    </pre>
+    <p>&nbsp;</p>
+    <h3>在JS中，0、""、null、false、undefined、NaN都会判定为false，而其他都为true。</h3>
+    <p><strong>a || b， 只要有一个true，值就是true。</strong></p>
+    <p><strong>a && b， 只要有一个false，值就是false。</strong></p>
+    <p>就是因为有上面的规则，所以可以提前退出表达式的计算。</p>
+    <p>&nbsp;</p>
+    <h3><strong>!!</strong>可以把任何类型转成boolean。</h3>
+    <pre>
+        if(foo)      //不够严谨
+        if(!!foo)    //更为严谨，!!可将其他类型的值转换为boolean类型
+    </pre>
+    <pre>
+            var foo,
+                  num = 1,
+                  str = "string",
+                  obj = {},
+                  arr = [];
+            console.log("typeof foo:" + typeof(foo));  // undefined
+            console.log("typeof num:" + typeof(num));　　//number
+            console.log("typeof str:" + typeof(str));　　//string
+            console.log("typeof obj:" + typeof(obj));　　//object　　
+            console.log("typeof arr:" + typeof(arr));　　//object
+
+            console.log("typeof !!foo:" +  typeof(!!foo) + "\t!!undefined的值：" + (!!foo));  // boolean   false
+            console.log("typeof !!num:" + typeof(!!num) + "\t!!1的值：" + (!!num));　　//boolean     true
+            console.log("typeof !!str:" + typeof(!!str) + "\t!!string的值：" + (!!str));　　//boolean        true
+            console.log("typeof !!obj:" + typeof(!!obj) + "\t!!{}的值：" + (!!obj));　　//boolean            true
+            console.log("typeof !!arr:" + typeof(!!arr) + "\t!![]的值：" + (!!arr));　　//boolean                true
+    </pre>
+</body>
+</html>
