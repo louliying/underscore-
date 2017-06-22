@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170620_2iteratee_cb_optimizeCb</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <p>下午5点多看这一章，好困。</p>
+    <p>第二天早上，来补的这一篇。</p>
+    <p>underscroe里，没有循环，都是迭代。</p>
+    <h3>iteratee</h3>
+    <p>对于一个迭代来说，至少需要：<strong>被迭代集合</strong>,<strong>当前迭代过程</strong></p>
+    <p>underscore里，当前迭代过程，是一个函数，称为iteratee，迭代者。它对当前的迭代元素进行处理。</p>
+    <p>来看下，underscore中，和iteratee相关的源码：</p>
+    <pre>
+        // _.map中的实现代码
+        _.map = _.collect = function (obj, iteratee, context) {
+            // iteratee可能是函数， 对象，甚至字符串，cb()就是统一把iteratee转为函数。
+            iteratee = cb(iteratee, context);
+            //  如果 obj不是类数组，是对象，获取obj的keys值数组
+            // 这里用了短路表达 式
+            var keys = !isArrayLike(obj) && _.keys(obj),
+                  // obj为对象，取keys.length,
+                  // obj为数组，取 obj.length
+                  length = (keys || obj).length,
+                  //  存放结果
+                  results = Array(length);
+
+            for (var index = 0; index < length; index++) {
+                 // 如果是对象，则需要 obj[keys[index]] 来取到当前对象
+                var currentKey = keys ? keys[index] : index;
+                // 迭代每个obj元素，用指定的迭代函数
+                results[index] = iteratee(obj[currentKey], currentKey, obj);
+            }
+            return results;
+        }
+    </pre>
+    <pre>
+        // cb的实现代码
+        /*
+            参数1 value: 传入的iteratee， 可以是函数，对象，字符串
+        */
+        var cb = function(value, content, argCount) {
+            // 如果 传入的iteratee是空，则返回当前迭代元素本身
+            //  使用场景
+            /*
+                _.map([2,3,4]);   //返回[2,3,4]
+                iteratee = cb(null, this);
+                                _.identity
+                                    return (value);
+                result[0] = 2;
+                result[1] = 3;
+                result[2] = 4;
+            */
+            if (value == null) {
+                return _.identity;
+            }
+            // 如果 是函数， 使用 optimizeCb，优化之
+            if (_.isFunction(value)) {
+                return optimizeCb(value, context, argCount);
+            }
+            // 如果 是对象，则返回iteratee(_.matcher);
+            // 目的是想知道当前被迭代元素，是否匹配给定的这个对象
+            /*
+                var arr = [
+                    { name: 'yoyou'},
+                    {name: 'xy'}
+                ];
+                var res = _.map(arr, {name:'xy'}); // res = [false, true];
+            */
+            if (_isObject(value)) {
+                return _.matcher(value);
+            }
+            // 如果 是其它直接量，像数字，字符串等
+            // 提示了一个对象的属性key，返回iteratee(_.property)，用来获取该属性对应的值
+            /*
+                var arr = [
+                    {name: 'yoyuoyo'},
+                    {name: 'xy'}
+                ];
+                var res = _.map(arr,'name');
+                // res = ['yoyuoyo', 'xy'];
+            */
+            return _.property(value);
+        }
+    </pre>
+    <pre>
+        // _.identity
+        // 返回传入的参数，本身
+        // 目的是为了简化 迭代函数的代码
+        _.identity = function(value) {
+            return value;
+        }
+    </pre>
+    <pre>
+        // optimizeCb 源码
+        /*
+            // func, 要优化的原函数
+            // content, this指向，执行上下文
+            // argCount, 参数 个数，默认为3
+        */
+        // 这个函数的作用，是为了让函数执行速度快
+        // underscore，里，多数是argCount为3的使用情况
+        var optimizeCb = function(func, context, argCount) {
+            // 必须要有this 指向
+            if (content === void 0) {
+                return func;
+            }
+            // 没有argCount时，为3
+            switch(argCount == null ? 3 : argCount) {
+                // 即iteratee只需要一个参数 ，像 _.times
+                case 1:
+                    return fucntion (value) {
+                        return func.call(context, value);
+                    }
+                // 2的情况underscore里没用到，据说，新的版本，已经拿掉了2
+                case 2:
+                    return function (value, other) {
+                        return fuc.call(content, value, otehr);
+                    }
+                // 3 的情况，是underscore用的最多的， 像 // _.each   _.map  _.filter
+                case 3:
+                    return function(value, index, collection) {
+                        return func.call(context, value, index, collection);
+                    }
+                // 比3多了一个 accumulator，累加器
+                // value  迭代元素   index迭代索引， collection当前迭代集合
+                //_.reduce  _reduceRight
+                case 4:
+                    return function(accumulator, value, index, collection) {
+                        return func.call(context, accumulator, value, index, collection);
+                    }
+            }
+            // argCount 有值 ，但不是1，2，3，4, 不是数字，大于4等情况
+            // case 1,2,3,4 在func.call()里，把参数一一传入。
+            //  明显说明  func.call(context,.....)   比 func.apply(context, arr) 来得执行速度快。（当然，是针对 大量的迭代代码来说）
+            return function() {
+                return func.apply(context, arguments);
+            }
+        }
+    </pre>
+    <pre>
+        // iteratee 迭代器源码
+        _.iteratee = funciton(value, context) {
+            return cb(value, context, Infinity);
+        }
+    </pre>
+
+    <pre>
+        // _.matcher 源码
+        // 判断一个给定的对象是否有某些键值对
+        _.matcher = _.matches = function(attrs) {
+            attrs = _.extendOwn({}, attrs);
+            return function(obj) {
+                return _.isMatch(obj, attrs);
+            }
+        }
+    </pre>
+    <p>写到这里，已经是6.22的中午了，马上可以吃午饭了。</p>
+    <p>underscore的感觉是：一个函数，没有很多的业务逻辑代码，多数都是调用其它函数。一个函数做一件事，拆分很细。</p>
+
+</body>
+</html>
