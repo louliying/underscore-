@@ -41,7 +41,7 @@
         /*
             参数1 value: 传入的iteratee， 可以是函数，对象，字符串
         */
-        var cb = function(value, content, argCount) {
+        var cb = function(value, context, argCount) {
             // 如果 传入的iteratee是空，则返回当前迭代元素本身
             //  使用场景
             /*
@@ -97,14 +97,14 @@
         // optimizeCb 源码
         /*
             // func, 要优化的原函数
-            // content, this指向，执行上下文
+            // context, this指向，执行上下文
             // argCount, 参数 个数，默认为3
         */
         // 这个函数的作用，是为了让函数执行速度快
         // underscore，里，多数是argCount为3的使用情况
         var optimizeCb = function(func, context, argCount) {
             // 必须要有this 指向
-            if (content === void 0) {
+            if (context === void 0) {
                 return func;
             }
             // 没有argCount时，为3
@@ -117,7 +117,7 @@
                 // 2的情况underscore里没用到，据说，新的版本，已经拿掉了2
                 case 2:
                     return function (value, other) {
-                        return fuc.call(content, value, otehr);
+                        return fuc.call(context, value, otehr);
                     }
                 // 3 的情况，是underscore用的最多的， 像 // _.each   _.map  _.filter
                 case 3:
