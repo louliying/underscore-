@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170626_1prototype()</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+            var property = function(key){
+                var args = arguments[1];
+                return function(obj){
+                    return obj == null ? void 0 : (obj[key] == null ? (obj[key] = args ) : obj[key]);
+                }
+            }
+    </script>
+    <script>
+        var obj = {
+            name: "cindy",
+            age: 20,
+            length:3,
+            name:"loulou"
+        };
+        //console.log(obj); //name:"loulou"
+        var getName = property("name");
+        console.log( getName(obj) );  //loulou
+
+        var setWords = property("words","I love you");
+        console.log(setWords(obj));
+    </script>
+
+</head>
+<body>
+    <h3>功能：取obj对象的key对应的value值</h3>
+    <p>如果obj里有二个相同的属性，后者是覆盖前者</p>
+    <p>源码里，是只取值 ，不设置key值的。 我自己用二个  三元操作符改了下，可以设置相应的key的value值了。</p>
+    <pre>
+            var property = function(key){
+                var args = arguments[1];
+                return function(obj){
+                    /*
+                        // 分解这一步
+                        if (obj == null)  {
+                            return void 0;  // return undefined;
+                        } else {
+                            if (obj[key] == null) {
+                                //如果 obj里，没有指定key里的属性
+                                obj[key] = args;        // obj[key] = arguments[1]; 即第二个参数
+                            } else {
+                                // obj里有key属性
+                                return obj[key];
+                            }
+                        }
+                    */
+                    return obj == null ? void 0 : (obj[key] == null ? (obj[key] = args ) : obj[key]);
+                }
+            }
+    </pre>
+    <pre>
+        var obj = {
+            name: "cindy",
+            age: 20,
+            length:3,
+            name:"loulou"
+        };
+        //console.log(obj); //name:"loulou"
+        var getName = property("name");
+        console.log( getName(obj) );  //loulou
+
+        var setWords = property("words","I love you");
+        console.log(setWords(obj));  // I love you
+    </pre>
+
+    <p>underscore里property源码：</p>
+    <pre>
+        // 用于获取obj里key值的value
+        // 这是一个典型的闭包
+        var property = function(key) {
+            return function (obj) {
+                return obj == null ? void 0 : obj[key];
+            };
+        };
+    </pre>
+</body>
+</html>
