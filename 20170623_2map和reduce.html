@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170623_2map和reduce</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // JS 中的map
+        function double2 (x) {
+            return x*2;
+        }
+
+        var arr = [1,2,3,4];
+        var arr2 = arr.map(double2);
+        console.log(arr2);  //[2, 4, 6, 8]
+        console.log(arr.map(String));   // ['1', '2', '3', '4']
+    </script>
+
+    <script>
+        // underscore中的map
+        /*
+            // 参数说明
+            // obj， 要被映射的集合         数组或对象
+            // iteratee  迭代器                 函数
+            // context  运行上下文
+        */
+        _.map = _.collect = function(obj, iteratee, context) {
+            // cb需要3个参数：  iteratee,  context, argCount(默认为3)
+            //  map是3
+            iteratee = cb(iteratee, context);
+            // 如果传参是对象，则获取它的 keys 值数组（短路表达式）
+            var keys = !isArrayLike(obj) && _.keys(obj),
+                  length = (keys || obj).length,
+                  results = Array(length);       //存放 结果的数组
+            for (var index = 0; index < length; index++) {
+                var currentKey = keys ? keys[index] : index;
+                //  obj[currentKey]  当前 元素
+                //   currentKey       当前 下标
+                //  这说明， map的 iteratee里，要存入3个参数： 当前元素，当前下标， 要被遍历的集合
+                results[index] = iteratee(obj[currentKey], currentKey, obj);
+            }
+            return results;
+        }
+        // _.map的使用实例
+        /*
+             var arr = [1,2,3,4];
+             var arr2 = _.map(arr, function(curItem, index, arr){   // function(curItem, index, arr) 这里可以，只传 curItem, 或 curItem, index
+                return curItem* curItem;
+             });
+        */
+    </script>
+    <script>
+        // JS中的 reduce
+        // 按照 参数中的fn， 把arr 的每个元素 ，合并到一个目标对象上。
+        var arr = [9,8,7];
+        var res = arr.reduce(function(x,y){
+            return x + y;
+        });
+
+        console.log(res);  //24
+    </script>
+    <script>
+        /*
+            // dir   1为从左到右
+                      -1 为从右到左
+        */
+        function createReduce(dir) {
+            /*
+                // 参数说明
+                // obj， 要被归结的集合，  数组或对象
+                // iteratee   迭代器             函数
+                // memo     初始值             obj中的某个值 ，一般是0，或最后一个
+                //  keys       obj的keys集合  数组
+                // index      当前index下标
+                // length    obj长度
+            */
+            function iterator(obj, iteratee, memo, keys, index, length) {
+                for(; index >= 0 && index < length; index += dir) {
+                    var currentKey = keys ? keys[index] : index;
+                    //迭代，返回值下次迭代调用
+                    memo = iteratee(meno, obj[currentKey], currentKey, obj);
+                }
+                return memo;
+            }
+            /*
+                // 参数说明
+                // obj 要遍历的集合      数组或对象
+                // interatee 迭代方法，对数组或者对象每个元素执行该方法
+                // memo初始值，要么是obj的第一个，要么是obj的最后一个
+                // context 为迭代函数中的this指向
+            */
+            return function(obj, iteratee, memo, context) {
+                iteratee = optimizeCb(iteratee, context, 4);
+                var keys = !isArrayLike(obj) && _.keys(obj),
+                      length = (keys || obj).length,
+                      index = dir > 0 ? 0 : length -1;   // 1就是index = 0, -1就是index = length -1
+
+                // arguments没有3，说明没有memo
+                if (arguments.length < 3) {
+                    memo = obj[keys ? keys[index] : index];     //把obj的第一个，或是最后一个，设置为初始值
+                    index += dir;       // 根据dir确定，是向左还是向右
+                }
+                return iterator(obj, iteratee, memo, keys, index, length);
+            }
+        }
+
+        //  从左向右
+        _.reduce = _.foldl = _.inject = createReduce(1);
+
+        // 从右向左
+        _.reduceRight = _.foldr = createReduce(-1);
+    </script>
+    <script>
+        // 网上的underscore的 reduce是这样的
+        var createReduce = function (dir) {
+            var recucer = function (obj, iteratee, memo, initial) {
+                var keys = !isArrayLike(obj) && _.keys(obj),        // 计算keys数组
+                      length = (keys || obj).length,                        // obj的长度
+                      index = dir > 0 ? 0 : length -1;                      // 初始index
+                // 如果 没有初始化memo
+                if (!initial) {
+                    memo = obj[keys ? keys[index] : index];     //如果 没有初始化memo，则obj的第一个或最后一个为初始值
+                    index += dir;
+                }
+                for (; index >= 0 && index < length; index += dir) {
+                    var currentKey = keys ? keys[index] : index;
+                    // 用了iteratee， optimizeCb的 argCount=4的case , 第一个参数，是集合器
+                    memo = iteratee(memo, obj[currentKey], currentKey, obj);
+                }
+                return memo;
+            };
+
+            return function(obj ,iteratee, memo, context) {
+                var initial = arguments.length >= 3;  // 如果 3个参数 以上， 则inital为true
+                return recucer(obj, optimizeCb(iteratee, context, 4), memo, initial);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h3>map:</h3>
+    <p>map（映射）：一个映射过种是指，将各个元素，按照一定的规则，逐个映射为新的元素。</p>
+    <p>JS中Array.prototype中map：</p>
+    <p>让数组中的每个元素，运行一编指定函数。然后返回一个新的数组。</p>
+    <p>JS中的map</p>
+    <pre>
+        // JS 中的map
+        function double2 (x) {
+            return x*2;
+        }
+
+        var arr = [1,2,3,4];
+        var arr2 = arr.map(double2);
+        console.log(arr2);  //[2, 4, 6, 8]
+        console.log(arr.map(String)); // ['1', '2', '3', '4']
+    </pre>
+    <p><b>JS中的map，只能针对数组。</b></p>
+    <p>underscore中的map</p>
+    <pre>
+        // underscore中的map
+        /*
+            // 参数说明
+            // obj， 要被映射的集合         数组或对象
+            // iteratee  迭代器                 函数
+            // context  运行上下文
+        */
+        _.map = _.collect = function(obj, iteratee, context) {
+            // cb需要3个参数：  iteratee,  context, argCount(默认为3)
+            //  map是3
+            iteratee = cb(iteratee, context);
+            // 如果传参是对象，则获取它的 keys 值数组（短路表达式）
+            var keys = !isArrayLike(obj) && _.keys(obj),
+                  length = (keys || obj).length,
+                  results = Array(length);       //存放 结果的数组
+            for (var index = 0; index < length; index++) {
+                var currentKey = keys ? keys[index] : index;
+                //  obj[currentKey]  当前 元素
+                //   currentKey       当前 下标
+                //  这说明， map的 iteratee里，要存入3个参数： 当前元素，当前下标， 要被遍历的集合
+                results[index] = iteratee(obj[currentKey], currentKey, obj);
+            }
+            return results;
+        }
+        // _.map的使用实例
+        /*
+             var arr = [1,2,3,4];
+             var arr2 = _.map(arr, function(curItem, index, arr){   // function(curItem, index, arr) 这里可以，只传 curItem, 或 curItem, index
+                return curItem* curItem;
+             });
+        */
+    </pre>
+    <hr>
+    <hr>
+
+    <h3>reduce:</h3>
+    <p>reduce（规约）：一个规约需要迭代指定列表的每一个元素，按一定的规则，把这些元素<strong>合并到一个目标对象上</strong>。</p>
+    <p>JS中的reduce</p>
+    <pre>
+         // JS中的 reduce
+        // 按照 参数中的fn， 把arr 的每个元素 ，合并到一个目标对象上。
+        var arr = [9,8,7];
+        var res = arr.reduce(function(x,y){
+            return x + y;
+        });
+
+        console.log(res);  //24
+    </pre>
+    <p>underscore中的reduce</p>
+    <pre>
+        /*
+            // dir   1为从左到右
+                      -1 为从右到左
+        */
+        function createReduce(dir) {
+            /*
+                // 参数说明
+                // obj， 要被归结的集合，  数组或对象
+                // iteratee   迭代器             函数
+                // memo     初始值             obj中的某个值 ，一般是0，或最后一个
+                //  keys       obj的keys集合  数组
+                // index      当前index下标
+                // length    obj长度
+            */
+            function iterator(obj, iteratee, memo, keys, index, length) {
+                for(; index >= 0 && index < length; index += dir) {
+                    var currentKey = keys ? keys[index] : index;
+                    //迭代，返回值下次迭代调用
+                    memo = iteratee(meno, obj[currentKey], currentKey, obj);
+                }
+                return memo;
+            }
+            /*
+                // 参数说明
+                // obj 要遍历的集合      数组或对象
+                // interatee 迭代方法，对数组或者对象每个元素执行该方法
+                // memo初始值，要么是obj的第一个，要么是obj的最后一个
+                // context 为迭代函数中的this指向
+            */
+            return function(obj, iteratee, memo, context) {
+                iteratee = optimizeCb(iteratee, context, 4);
+                var keys = !isArrayLike(obj) && _.keys(obj),
+                      length = (keys || obj).length,
+                      index = dir > 0 ? 0 : length -1;   // 1就是index = 0, -1就是index = length -1
+
+                // arguments没有3，说明没有memo
+                if (arguments.length < 3) {
+                    memo = obj[keys ? keys[index] : index];     //把obj的第一个，或是最后一个，设置为初始值
+                    index += dir;       // 根据dir确定，是向左还是向右
+                }
+                return iterator(obj, iteratee, memo, keys, index, length);
+            }
+        }
+
+        //  从左向右
+        _.reduce = _.foldl = _.inject = createReduce(1);
+
+        // 从右向左
+        _.reduceRight = _.foldr = createReduce(-1);
+    </pre>
+    <p>网上，另一处reduce的源码</p>
+    <pre>
+        // 网上的underscore的 reduce是这样的
+        var createReduce = function (dir) {
+            var recucer = function (obj, iteratee, memo, initial) {
+                var keys = !isArrayLike(obj) && _.keys(obj),        // 计算keys数组
+                      length = (keys || obj).length,                        // obj的长度
+                      index = dir > 0 ? 0 : length -1;                      // 初始index
+                // 如果 没有初始化memo
+                if (!initial) {
+                    memo = obj[keys ? keys[index] : index];     //如果 没有初始化memo，则obj的第一个或最后一个为初始值
+                    index += dir;
+                }
+                for (; index >= 0 && index < length; index += dir) {
+                    var currentKey = keys ? keys[index] : index;
+                    // 用了iteratee， optimizeCb的 argCount=4的case , 第一个参数，是集合器
+                    memo = iteratee(memo, obj[currentKey], currentKey, obj);
+                }
+                return memo;
+            };
+
+            return function(obj ,iteratee, memo, context) {
+                var initial = arguments.length >= 3;  // 如果 3个参数 以上， 则inital为true
+                return recucer(obj, optimizeCb(iteratee, context, 4), memo, initial);
+            }
+        }
+    </pre>
+    <p>写完这个.html，已经是2017.6.26了。。。。</p>
+</body>
+</html>
