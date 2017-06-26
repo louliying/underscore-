@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170626_3isArray</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // js中 数组的判断
+        var isArray = function (arr) {
+            // 如果 支持Array.isArray, 则用源生Array.isArray()  这是ES5新增的
+            // 如果不支持，则用toString返回值
+            return Array.isArray? Array.isArray(arr) : Object.prototype.toString.call(arr) === '[object Array]';
+        }
+    </script>
+    <script>
+        // underscore.js中的_.isArray()
+        _.isArray = nativeIsArray || function (obj) {
+            return toString.call(obj) === '[object Array]';
+        }
+        // var nativeIsArray = Array.isArray()
+        // var ObjProto = Object.prototype;
+        // var toString = ObjProto.toString;
+
+        // 整个代码拆解
+        /*
+            if (nativeIsArray) {
+                _.isArray = nativeIsArray(obj);
+            } else {
+                _.isArray = Object.prototype.toString.call(obj)  === '[object Array]'
+            }
+        */
+    </script>
+</head>
+<body>
+    <h3>JS源生isArray判断</h3>
+    <pre>
+        // js中 数组的判断
+        var isArray = function (arr) {
+            // 如果 支持Array.isArray, 则用源生Array.isArray()  这是ES5新增的
+            // 如果不支持，则用toString返回值
+            return Array.isArray? Array.isArray(arr) : Object.prototype.toString.call(arr) === '[object Array]';
+        }
+    </pre>
+    <h3>underscore中的isArray源码</h3>
+    <p>直接上代码：</p>
+    <pre>
+        // underscore.js中的_.isArray()
+        _.isArray = nativeIsArray || function (obj) {
+            return toString.call(obj) === '[object Array]';
+        }
+        // var nativeIsArray = Array.isArray()
+        // var ObjProto = Object.prototype;
+        // var toString = ObjProto.toString;
+
+        // 整个代码拆解
+        /*
+            if (nativeIsArray) {
+                _.isArray = nativeIsArray(obj);
+            } else {
+                _.isArray = Object.prototype.toString.call(obj)  === '[object Array]'
+            }
+        */
+    </pre>
+    <p>这里有点不明白，如果支持ES5的浏览器，直接调用nativeIsArray,即Array.isArray， obj是怎么存进入去的？？？</p>
+    <p>我在test.html里，想断点跟进去的，没办法跟进去看。。。。</p>
+</body>
+</html>
