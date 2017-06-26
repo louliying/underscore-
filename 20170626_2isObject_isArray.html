@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170626_2isObject_isArray</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // typeof的代码
+        var a = null;
+        var b = {};
+        var e = [];
+        console.log("the typeof null is:" + typeof a);      // object
+        console.log("the typeof {} is:" + typeof b);         //  object
+        console.log("the typeof [] is:" + typeof e);                    // object
+
+        console.log("请看下!!null的值:" +  !!a );        // false
+    </script>
+    <script>
+        var isObject = function (obj) {
+            // 1. typeof 是object
+            // 2. !!obj 为true,排除null
+            // 3. toString不为array ，排除array。
+            return typeof obj === 'object' && !!obj && Object.prototype.toString.call(obj) !== '[object Array]';
+        }
+        console.log("null 是object?" + isObject(a));     //false
+        console.log("{} 是object?" + isObject(b));       // true
+        console.log("[] 是object?" + isObject(e));          // false
+    </script>
+    <script>
+        // underscore里的isObject源码：
+        // 它把function也看成是object了
+        _.isObject = function (obj) {
+            var type = typeof obj;
+            // function也是返回true
+            // null不是对象
+            //  数组和函数，都是object
+            return type === 'function' || type ==='object' && !obj;
+        }
+    </script>
+</head>
+<body>
+    <h3>typeof的结果</h3>
+    <p>typeof null:  <strong>null</strong>、<strong>{}</strong>、<strong>[]</strong>都是object</p>
+    <p>因此判断是否是object需要三步：</p>
+    <ul>
+        <li>typeof 是object</li>
+        <li>不是null，即 !!obj是true</li>
+        <li>不是array</li>
+    </ul>
+    <h3>JS中判断一个变量是否为对象:</h3>
+    <pre>
+        var a = null;
+        var b = {};
+        var e = [];
+         var isObject = function (obj) {
+            // 1. typeof 是object
+            // 2. !!obj 为true,排除null
+            // 3. toString不为array ，排除array。
+            return typeof obj === 'object' && !!obj && Object.prototype.toString.call(obj) !== '[object Array]';
+        }
+        console.log("null 是object?" + isObject(a));     //false
+        console.log("{} 是object?" + isObject(b));       // true
+        console.log("[] 是object?" + isObject(e));          // false
+    </pre>
+    <h3>underscore中的_.isObject()</h3>
+    <p>underscore中，把function , array , object三个，都当成是isObject为true的类型</p>
+    <pre>
+        // underscore里的isObject源码：
+        // 它把function也看成是object了
+        _.isObject = function (obj) {
+            var type = typeof obj;
+            // function也是返回true
+            // null不是对象
+            //  数组和函数，都是object
+            return type === 'function' || type ==='object' && !obj;
+        }
+    </pre>
+</body>
+</html>
