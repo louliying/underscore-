@@ -30,6 +30,20 @@
             }
         */
     </script>
+    <script>
+        // 类数组判断
+        // 意为2的53次幂等于9007199254740991
+        var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+        // 返回obj[length], arr[length], arrLike[length]
+        var getLength = property('length');
+
+        var isArrayLike = function (collection) {
+            var length = getLength(collection);
+            //  有length属性，且length属性是个数值
+            //  length  大于等于0，小于最大值
+            return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
+        }
+    </script>
 </head>
 <body>
     <h3>JS源生isArray判断</h3>
@@ -63,5 +77,19 @@
     </pre>
     <p>这里有点不明白，如果支持ES5的浏览器，直接调用nativeIsArray,即Array.isArray， obj是怎么存进入去的？？？</p>
     <p>我在test.html里，想断点跟进去的，没办法跟进去看。。。。</p>
+     <h3>Underscore 类数组判断</h3>
+    <pre>
+        // 类数组判断
+        // 意为2的53次幂等于9007199254740991
+        var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+        // 返回obj[length], arr[length], arrLike[length]
+        var getLength = property('length');
+        var isArrayLike = function (collection) {
+            var length = getLength(collection);
+            //  有length属性，且length属性是个数值
+            //  length  大于等于0，小于最大值
+            return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
+        }
+    </pre>
 </body>
 </html>
