@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170626_4其它类型判断</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h3>其它类型的判断：</h3>
+    <p>underscore.js中，用了巧妙的方法：</p>
+    <pre>
+        _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function (name) {
+            _['is' + name] = function (obj) {
+                return toString.call(obj) === '[object ' + name + ']';
+            };
+        });
+    </pre>
+</body>
+</html>
