@@ -15,5 +15,57 @@
             };
         });
     </pre>
+    <h3>isBoolean</h3>
+    <pre>
+        var isBoolean = function(obj) {
+            // 1. true 或 false
+            // 2. Object.prototype.toString 是'[object Boolean]'
+            return obj === true || obj === false || Object.prototype.toString.call(obj) === '[object Boolean]';
+        }
+        // 测试了下，也可以不需要obj === true   obj ===false的，
+        // var a = true; console.log(Object.prototype.toString.call(a));  // 返回了'[object Boolean]'
+        // return里，用了短路表达式，如果obj真是boolean, 表达式可以提前结束。 这里加了 obj === true || obj === false， 只是为了提高性能
+    </pre>
+    <script>
+        var a = true;
+        console.log(Object.prototype.toString.call(a));
+    </script>
+    <h3>isNull</h3>
+    <pre>
+        var isNull = function (obj) {
+            // null == null
+            // undefined == null
+            // null === null
+            // undefined !== null
+            return obj === null;
+        }
+        // 这里注意
+        // obj === null, 全等和非全等的区别，考虑undefined 和null
+    </pre>
+    <h3>isUndefined</h3>
+    <pre>
+        var isUndefined = function(obj) {
+            return obj === void 0;
+        }
+        // 这里没有用undefined，因为它会被修改
+    </pre>
+    <h3>isNaN</h3>
+    <pre>
+        var isNaN = function(obj) {
+            // 1. [object Number] 是数字类型
+            // 2. 强制转成number后，不相等   console.log("NaN !== +NaN??" + (NaN !== +NaN));
+            return isNumber(obj) && obj !== + obj;
+        }
+        // 可以试下
+        // console.log("NaN !== +NaN??" + (NaN !== +NaN));  返回的是true
+    </pre>
+    <h3>isFinite</h3>
+    <pre>
+        var isFinite = function(obj) {
+            // 1. 是isFinite
+            //  2. 强制转成float后，不是NaN
+            return isFinite(obj) && !isNaN( parseFloat(obj) );
+        }
+    </pre>
 </body>
 </html>
