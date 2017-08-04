@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170804_1工具判断:isEmpty</title>
+    <script>
+         var isArray = function (arr) {
+            // 如果 支持Array.isArray, 则用源生Array.isArray()  这是ES5新增的
+            // 如果不支持，则用toString返回值
+            return Array.isArray? Array.isArray(arr) : Object.prototype.toString.call(arr) === '[object Array]';
+        }
+        var isString = function(str) {
+            return Object.prototype.toString.call(str) === '[object String]';
+        }
+        var isArguments = function(arg) {
+            return Object.prototype.toString.call(arg) === '[object Arguments]';
+        }
+        var isObject = function (obj) {
+            // 1. typeof 是object
+            // 2. !!obj 为true,排除null
+            // 3. toString不为array ，排除array。
+            return typeof obj === 'object' && !!obj && Object.prototype.toString.call(obj) !== '[object Array]';
+        }
+        var keys = function(obj) {
+            if (!isObject(obj)) {
+                return [];
+            }
+            if (Object.keys) {
+                return Object.keys(obj);
+            }
+            var keys = [];
+            for (var key in obj){
+                if (obj.hasOwnProperty(key)) {
+                    keys.push(key);
+                }
+            }
+            return keys;
+        }
+        /*var obj = {
+            name: 'cindy',
+            age: 20,
+            gender: 'female'
+        }
+        console.log("keys:");
+        console.log(keys(obj));*/
+
+        //原生JS的判断
+        var isEmpty = function (obj) {
+            // 1. null undefined
+            // isEmpty()   obj为undefined
+            // isEmpty(null)  obj为 null
+            // isEmpty(void(0))  obj为 undefined
+           if (obj == null ) {
+                // undefined == null  是的
+                // undefined === null 假的
+                return true;
+           }
+           // 2. 数组，类数组， 字符串
+           if (isArray(obj) || isString(obj) || isArguments(obj)) {
+                return obj.length === 0;
+           }
+
+           // 3. 对象
+           return keys(obj).length === 0;
+
+        }
+        // var obj = null;
+        // var obj = {};  //空对象
+        /*var obj = {
+            name: 'cindy',
+            age: 20
+        };*/
+        // var obj = '';  // 空字符串
+        var obj = [];       //空数组
+
+        // alert(isEmpty(void(0)));
+        // alert(isEmpty(obj));
+    </script>
+</head>
+<body>
+    <h3>判断一个变量是否空</h3>
+    <p>本质：一个变量，{}， [], "", null, undefined时，应该就是空的</p>
+    <p>判断的步骤：</p>
+    <ul>
+        <li>1. 特殊化对待 null , undefined</li>
+        <li>2. 数组，字符串，类数组，参数对象，判断长度</li>
+        <li>3. 对象，判断keys的长度</li>
+    </ul>
+    <h3>写本篇的心得：</h3>
+    <ul>
+        <li>1. if (obj == null)  这里的null == null, 条件成真， undefined == null ，条件成真</li>
+        <li>2. if (obj === null)  null === null，条件成真， undefined === null, 条件为假</li>
+    </ul>
+</body>
+</html>
