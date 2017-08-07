@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170804_2createAssigner</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // 老规矩，先敲一遍代码
+        /*
+            // underscore中，用到这个函数的地方
+            //_.extend & _.extendOwn & _.defaults    //把第二个参数后面的对象的键值对
+            //_.extend = createAssigner(_.allKeys)
+            //_.extendOwn = _.assign = createAssigner(_.keys)
+            //_.defaults = createAssigner(_.allKeys, true)
+        */
+        // 当实参个数为 1，或者第一个参数是 null 时，这时我们不需要做任何 "extend"，直接返回第一个参数。
+        // 之后，我们便可以用 arguments 枚举除去第一个参数外的其他参数，将它们的键值对覆盖到第一个参数对象上
+        // keysFunc， 第一个参数，是一个函数
+        var createAssigner = function (keysFunc, undefinedOnly) {
+            return function (obj) {
+                var length = arguments.length;
+                // 如果只有一个参数或第一个参数为null，即只有源对象自己，直接返回它
+                if (length < 2 || obj == null) {
+                    return obj;
+                }
+
+                // 从arguments[1]开始 枚举 参数对象
+                for( var index = 1; index < length; index++) {
+                    var source = arguments[index],
+                          // 提取形参对象的 keys,用来后面的迭代
+                          // 在underscoer里， keysFunc 参数表示 _.keys 或是 _.allKeys
+                          keys = keysFunc(source),
+                          l = keys.length;
+
+                    for (var i = 0; i < l; i++) {
+                        var key = keys[i];
+                        // _.extend 和 _.extendOwn 方法
+                        // 没有传入 undefinedOnly 参数，即 !undefinedOnly 为 true
+                        // 即肯定会执行 obj[key] = source[key]
+                        // 后面对象的键值对直接覆盖 obj
+                        // ==========================================
+                        // _.defaults 方法，undefinedOnly 参数为 true
+                        // 即 !undefinedOnly 为 false
+                        // 那么当且仅当 obj[key] 为 undefined 时才覆盖
+                        // 即如果有相同的 key 值，取最早出现的 value 值
+                        // *defaults 中有相同 key 的也是一样取首次出现的
+                        if (!undefinedOnly || obj[key] === void 0) {
+                            // 迭代复制
+                            obj[key] = source[key];
+                        }
+                    }
+                }
+                return obj;
+            };
+        };
+    </script>
+</head>
+<body>
+    <h3>createAssigner，拷贝</h3>
+    <p>在underscore里， underscore中，用到这个函数的地方：</p>
+    <ul>
+        <li>_.extend & _.extendOwn & _.defaults</li>
+        <li>_.extend = createAssigner(_.allKeys)</li>
+        <li>_.extendOwn = _.assign = createAssigner(_.keys)</li>
+        <li>_.defaults = createAssigner(_.allKeys, true)</li>
+    </ul>
+    <ul>
+        <li>1. _.extend , _.extendOwn ,_.defaults 都是方法</li>
+        <li>
+            <p>2.  _.extend , _.extendOwn, 第二个参数都是false</p>
+            <p>即!undefinedOnly 为true, 它肯定是会运行obj[key] = source[key];</p>
+            <p>也就是，它们是后来的key，会覆盖前面出现过的key</p>
+        </li>
+        <li>
+            <p>3. _.defaults,第二个参数是true, 那也就是，只有obj[key]为undefined时，才会去覆盖。</p>
+            <p>所以，它是，只有第一次出现的key会被copy过去。后面的key不会覆盖前面的。</p>
+        </li>
+    </ul>
+</body>
+</html>
