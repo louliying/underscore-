@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170807_1工具判断:isElement</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        var isElement = function (obj) {
+            // 1. obj不为空  !!null  !!undefined  都是false
+            // 2. obj.nodeType 为1
+            return !!(obj && obj.nodeType === 1);
+        }
+    </script>
+    <script>
+        // test !!null  和   !!undefined
+        function isNullUndefined (obj) {
+            console.log(obj);
+            console.log("!!null/undefined:" + !!obj);
+            // return !!obj;
+            return !!obj && obj.nodeType === 1;
+        }
+        // isNullUndefined(null);
+        // isNullUndefined(undefined);
+        window.onload = function(){
+            var oDiv = document.getElementById("div1");
+            console.log(oDiv.getAttribute("id"));
+            console.log("div1是个DOM元素节点吗？");
+            console.log(isNullUndefined(oDiv));
+        }
+    </script>
+</head>
+<body>
+    <div id="div1"></div>
+    <h3>判断是否为DOM结点</h3>
+    <pre>
+        return !!(obj && obj.nodeType === 1);
+    </pre>
+    <p>代码步骤：</p>
+    <ol>
+        <li>obj不为null 或 undefined</li>
+        <li>obj.nodeType === 1</li>
+    </ol>
+    <p>!!可以让所有类型，都强制转成boolean型</p>
+    <p>!!null    --->  false</p>
+    <p>!!undefined ---> false</p>
+    <p>源码里，是先obj && obj.nodeType ===1</p>
+    <pre>
+        function isNullUndefined (obj) {
+            console.log(obj);
+            console.log("!!null/undefined:" + !!obj);
+            // return !!obj;
+            return !!obj && obj.nodeType === 1;
+        }
+        // isNullUndefined(null);
+        // isNullUndefined(undefined);
+        window.onload = function(){
+            var oDiv = document.getElementById("div1");
+            console.log(oDiv.getAttribute("id"));
+            console.log("div1是个DOM元素节点吗？");
+            console.log(isNullUndefined(oDiv));
+        }
+    </pre>
+    <p>isNullUndefined()：本来是，为了测试!!null !!undefined是false</p>
+    <p>isNullUndefined()：传入的实参是一个dom，返回true。</p>
+    <p>它的步骤是：obj不为null, undefined,  obj.nodeType 是1。</p>
+    <p>不知道，它和上面的isElement有什么区别否。。。</p>
+</body>
+</html>
