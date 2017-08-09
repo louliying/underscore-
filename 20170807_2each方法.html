@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170807_2_.each方法</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h3>_.each()的作用：</h3>
+    <p>遍历数组或者对象的每个元素，返回要循环的对象本身，供链式调用。</p>
+    <p>参数1：数组（包括类数组）或者对象</p>
+    <p>参数2：迭代方法，对数组或者对象每个元素都执行该方法。 是一个函数。该方法又能传入三个参数，分别为 (item, index, array)（(value, key, obj) for object）</p>
+    <p>参数3：（可省略）确定第二个参数 迭代方法 中的（可能有的）this 指向</p>
+    <h3>我自己的each</h3>
+    <pre>
+        var _ = {};
+        _.each = function(obj,fn,context){
+            if(obj == null) return obj;
+            var i, length = obj.length;
+            if(length === +length){
+                //数组
+                for(i=0; i < length; i++){
+                    fn.call(context,obj[i]);
+                }
+            }else{
+                //对象
+                var aTemp = [];
+                //收集所有key到aTemp数组 里
+                for(var key in obj){
+                    aTemp.push(key);
+                }
+                for(i=0,length = aTemp.length; i < length; i++ ){
+                    fn.call(context,obj[aTemp[i]]);
+                }
+            }
+            return obj;
+        }
+    </pre>
+    <p>原理是：</p>
+    <p>数组/类数组， 直接for循环，把每个数组元素，依次调用fn.call()</p>
+    <p>对象，for...in...收集所有key。再for，把每个对象的value依次调用 fn.call()</p>
+    <p>返回第一次参数，要被循环的对象。以供后面的链式调用。</p>
+    <h3>underscore的each</h3>
+    <pre>
+        _.each = _.forEach = function(obj, iteratee, context) {
+            // 优化下iteratee
+            iteratee = optimizeCb(iteratee, context);
+            var i, length;
+            if (isArrayLike(obj)) {
+                //类数组，数组
+                for (i = 0, length = obj.length; i < length; i++) {
+                    iteratee(obj[i], i, obj);
+                }
+            } else {
+                var keys = _.keys(obj);
+                for (i = 0, length = keys.length; i < length; i++) {
+                    iteratee(obj[keys[i]], keys[i], obj);
+                }
+            }
+            // 返回obj，可供链式调用
+            return obj;
+        }
+    </pre>
+</body>
+</html>
