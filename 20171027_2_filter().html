@@ -49,6 +49,8 @@
             return results;
         }
     </pre>
+    <hr />
+    <p>以下补于20171030</p>
     <h3>与filter相反功能的：reject()</h3>
     <p>功能：寻找数组或对象中，<strong>所有</strong>不满足条件的元素。并以数组形式返回。得到的结果，是filter的补集</p>
     <pre>
@@ -66,5 +68,23 @@
     </pre>
     <p>这里，问了下leo，为什么要返回函数。1. 可方便重复使用。 2.懒执行，即先组合在一些，在最后一次调用时，才会去执行各个函数。这点，是我自己没有想到的。</p>
     <p>至于，如何 去抽取出函数：1.需要看看函数式编程，了解它的抽函数规则。</p>
+    <p>一个简单的高阶函数，返回函数：</p>
+    <pre>
+        var isEven = function(value) {
+            return value %2 === 0;
+        }
+
+        function not(fn){
+            return function(){
+                return !fn.apply(this, arguments);
+            }
+        }
+
+        var isOdd = not(isEven);
+        isEven(1);
+        isOdd(1);
+    </pre>
+    <p>not就是一个反转函数，可以用来反转，非奇数，非hasClass等，很多。</p>、
+    <p>同时，也是为了算法复用。</p>
 </body>
 </html>
