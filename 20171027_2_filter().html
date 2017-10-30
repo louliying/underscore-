@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20171027_2_.filter()</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        var arr = [1,2,3,4,5,6].filter(function(value){
+            if (value%2 === 0) {
+                return value;
+            }
+        });
+        console.log(arr);
+    </script>
+</head>
+<body>
+    <h3>_.filter()作用：</h3>
+    <p>寻找数据或对象中<strong>所有</strong>满足条件的元素。如果是数组，将数组中的值存入数组。如果是对象，将对象的value存入数组，返回该<strong>新数组</strong>。</p>
+    <h3>原生JS ES5中的filter:</h3>
+    <pre>
+        var arr = [1,2,3,4,5,6].filter(function(value){
+            if (value%2 === 0) {
+                return value;
+            }
+        });
+        console.log(arr); // [2,4, 6]
+    </pre>
+    <h3>源码：</h3>
+    <p>_.find()源码：</p>
+    <pre>
+        /*
+            参数说明：
+            obj: 要被查找 的数组 或 对象
+            predicate: 迭代器， 需要返回true或false的迭代器
+            context:
+
+            使用：
+            var evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+            evens: [2, 4, 6]
+        */
+        _.filter = _.select = function(obj, predicate, context) {
+            var results = [];
+            predicate = cb(predicate, context);
+            _.each(obj, function(value, index, list){
+                if (prdicate(value, index, list)) {
+                    result.push(value);
+                }
+            });
+            return results;
+        }
+    </pre>
+</body>
+</html>
