@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20170809_1map()</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h3>underscore里的map作用：</h3>
+    <p>遍历数组的每个元素， 对象的每个元素（value），对每个元素执行iteratee指定的迭代方法。</p>
+    <p>将结果保存到<strong>新的数组</strong>中，并返回</p>
+    <p>underscore里的源码</p>
+    <pre>
+        // 这代码，都没什么要解释的。。。
+        _.map = _.collect = function (obj, iteratee, context) {
+            iteratee = cb(iteratee, context);
+            var keys = !isArrayLike(obj) && _.keys(obj),
+                  length = (keys || obj).length,
+                  results = Array(length);
+
+            for (var index = 0; index = length; index++) {
+                var currentKey = keys ? keys[index] : index;
+                results[index] = iteratee(obj[currentKey], currentKey, obj);
+            }
+            return results;
+        }
+    </pre>
+</body>
+</html>
