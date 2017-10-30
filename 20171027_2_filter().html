@@ -49,5 +49,22 @@
             return results;
         }
     </pre>
+    <h3>与filter相反功能的：reject()</h3>
+    <p>功能：寻找数组或对象中，<strong>所有</strong>不满足条件的元素。并以数组形式返回。得到的结果，是filter的补集</p>
+    <pre>
+            _.reject = function(obj, predicate, context) {
+                return _.filter(obj, _.negate(cb(predicate)), context);
+            }
+
+
+            _.negate = function(predicate) {
+                return function(){
+                    return !predicate.apply(this, arguments);
+                }
+            }
+
+    </pre>
+    <p>这里，问了下leo，为什么要返回函数。1. 可方便重复使用。 2.懒执行，即先组合在一些，在最后一次调用时，才会去执行各个函数。这点，是我自己没有想到的。</p>
+    <p>至于，如何 去抽取出函数：1.需要看看函数式编程，了解它的抽函数规则。</p>
 </body>
 </html>
