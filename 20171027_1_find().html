@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20171027_1_find()</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h3>_.find()作用：</h3>
+    <p>寻找数据或对象中，第一个满足条件的元素，并将其返回。</p>
+    <p>如果没有找到，返回undefined。</p>
+    <p>如果找到，立即返回，不再往下遍历</p>
+    <h3>源码：</h3>
+    <p>_.find()源码：</p>
+    <pre>
+        /*
+            // 参数说明
+            // obj，要被遍历的数组或对象
+            // predicate, 迭代器
+            // 例如： var even = _.find([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });  even为2
+        */
+        _.find = _.detect = function(obj, predicate, context) {
+            var key;
+            if (isArrayLike(obj)) {
+                // 如果 是类数组
+                key = _.findIndex(obj, predicate, context);
+            } else {
+                // 如果 是对象
+                key = _.findKey(obj, predicate, context);
+            }
+            // key存在，说明该元素存在，则返回obj对应key的值
+            if (key !== void 0 && key !== -1) {
+                return obj[key];
+            }
+
+            // 这里，省略了else{ return undefined}
+            // 函数没有返回，就是返回undefined
+        }
+        </pre>
+        <p>_.find()方法的思路:</p>
+        <ul>
+            <li>1.利用predicate迭代器，在obj里，找到相应条件的key： predicate是一个，返回true或false的方法，一当true，就说明，找到了要找的元素，返回它的key.</li>
+            <li>2.如果key存在且不为-1，返回obj[key]</li>
+            <li>3.如果 key不存在，就会返回undefined。函数的默认返回值 是undefined。</li>
+        </ul>
+        <p>_.findIndex()源码：</p>
+        <pre>
+        _.findIndex = createPredicateIndexFinder(1);
+
+        function createPredicateIndexFinder(dir) {
+            return function(array, predicate, context) {
+                predicate = cb(predicate, context);
+                var length = getLength(array);
+                var index = dir >0 ? 0 : length -1;
+                for (; index >=0 && index &lt;length; index += dir) {
+                    // predicate，就是优化过的find里，存进来的迭代函数，按optimizeCb,三个参数的那种
+                    // predicate，传入的，是一种，返回true / false的函数
+                    if (predicate(array[index], index, array)) {
+                        return index;
+                    }
+                }
+                return -1;
+            }
+        }
+        </pre>
+        <p>_.findKey()源码：</p>
+        <pre>
+        // 它和数组 的createPredicateIndexFinder(1)，没什么区别，只是lenght的取得方法不一样
+        _.findKey = function(obj, predicate, context) {
+            predicate = cb(predicate, context);
+            var keys = _.keys(obj),
+                            key;
+            for (var i =0, length = keys.length; i < lenght; i++) {
+                key = keys[i];
+                if (predicate(obj[key], key, obj)) {
+                    return key;
+                }
+            }
+        }
+    </pre>
+</body>
+</html>
