@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20171030_1_.every()</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        //原生every
+        // 数组的方法，检测 数组中，所有的 元素，是否符合迭代器的条件
+        // 所有元素都满足，返回true
+        // 有一个元素不满足，返回false
+        var arr = [1, 2, 3];
+        var result = arr.every(function(n){
+            return n > 2;
+        });
+        console.log('result:' + result);
+    </script>
+    <script>
+        var _ = {};
+        _.every = _.all = function (obj, predicate, context) {
+            predicate = cb(predicate, context);
+
+            var keys = !isArrayLike(obj) && _.keys(obj),
+                length = (keys || obj).length;
+            for (var index = 0; index < length; index++) {
+                var currentKey = keys ? key[index] : index;
+                // 有一个false，就直接 返回false了
+                if (!predicate(obj[currentKey], currentKey, obj)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <h3>原生every</h3>
+    <p>数组的方法，检测 数组中，所有的 元素，是否符合迭代器的条件</p>
+    <p>所有元素都满足，返回true。 有一个元素不满足，返回false。</p>
+    <pre>
+        var arr = [1, 2, 3];
+        var result = arr.every(function(n){
+            return n > 2;
+        });
+        console.log('result:' + result);
+    </pre>
+    <h3>_.every</h3>
+    <pre>
+        _.every = _.all = function (obj, predicate, context) {
+            predicate = cb(predicate, context);
+
+            var keys = !isArrayLike(obj) && _.keys(obj),
+                length = (keys || obj).length;
+            for (var index = 0; index < length; index++) {
+                var currentKey = keys ? key[index] : index;
+                if (!predicate(obj[currentKey], currentKey, obj)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    </pre>
+    <p>和原生的没区别，只是把predicate， 迭代器，进行了优化</p>
+</body>
+</html>
