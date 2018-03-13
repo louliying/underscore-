@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20180313_some().html</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        //原生 ES5中的Array.prototype.some
+        // 判断数组或对象 中，是否有一个元素，元素可以是value, object， 是满足迭代器的要求
+        // 只要有一个元素满足，就return true了
+        // 查看  arr里， 是否有2的整数
+        var arr = [1, 2, 3];
+        var res = arr.some(function(value){
+            return value % 2 == 0
+        });
+        console.log(res);
+    </script>
+    <script>
+            var _ = {};
+            _.some = _.any = function(obj, predicate, context) {
+                predicate = cb(predicate, context);
+                var keys = !isArrrayLike(obj) && _.keys(obj),
+                    length = (keys || obj) .length;
+                for (var index = 0; index < length; index++) {
+                    var currentKey = keys ? keys[index] : index;
+                    // 有一个true，就直接返回了
+                    if (predicate(obj[currentKey], currentKey, obj)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+    </script>
+</head>
+<body>
+
+</body>
+</html>
