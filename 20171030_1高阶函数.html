@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20171030_高阶函数</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+            //偏函数：
+            var isString = function(obj) {
+                return Object.prototype.toString.call(obj) === "[object String]";
+            }
+            var isArray = function(obj) {
+                return Object.prototype.toString.call(obj) === "[object Array]";
+            }
+
+            var isType = function(type) {
+                return function(obj) {
+                    return Object.prototype.toString.call(obj)  === "[object " + type+ "]";
+                }
+            }
+            var isString1 = isType("String");
+            var str = "cindy";
+            console.log(str + "'s type is String?", isString1(str));
+
+            var isNumber1 = isType('Number');
+            var num = 10;
+            console.log(num + "'s type is Number?", isNumber1(num ));
+    </script>
+    <script>
+        //currying
+        var currying = function(fn) {
+            debugger;
+            var args = [];
+            return function() {
+                if (arguments.length === 0) {
+                    return fn.apply(this, args);
+                } else {
+                    Array.prototype.push.apply(args, arguments);
+                    return arguments.callee;
+                }
+            }
+        }
+
+        var cost = function(){
+            var sum = 0;
+            for (var i = 0, len = arguments.length; i< len; i ++) {
+                sum += arguments[i];
+            }
+            return sum;
+        }
+        cost = currying(cost);   // 运行currying， 这时 args是空的，只是返回了 34行的匿名函数，但没运行
+        cost(100);  // 运行 34行返回的匿名函数，参数为100， 这时，走的是38行， args = [100]
+        cost(200);    // 运行34行返回的匿名函数， 参数为200， 这时，走的还是38行， 这时args = [100, 200]  ， 闭包，让currying里的args不被回收
+        alert(cost());  //运行34行返回的匿名函数，参数为空，这时，走的是36行，调用了fn()， 这时args = [100, 200]， 调用cost函数， 返回sum为30
+    </script>
+    <script>
+        function throttle(fn, interval) {
+            var doing = false;
+            return function(){
+                if (doing) {
+                    return;
+                }
+                doing = true;
+                fn.apply(this, arguments);
+                setTimeout(function(){
+                    doing = false;
+                }, interval);
+            }
+        }
+        window.onresize = throttle(function(){
+            console.log('execute');
+        }, 500);
+    </script>
+    <script>
+        // 事件结束
+        function debounce( fn, interval) {
+            var timer = null;
+            function delay() {
+                var target = this;
+                var args = arguments;
+                return setTimeout(function(){
+                    fn.apply(target, args);
+                }, interval);
+            }
+
+            return function(){
+                if (timer) {
+                    clearTimeout(timer);
+                }
+                timer = delay.apply(this, arguments);
+            }
+        };
+
+        window.onscroll = debounce(function(){
+            console.log('scroll end');
+        }, 500);
+    </script>
+</head>
+<body>
+    <p>高阶函数，常用的几个地方：</p>
+    <h3>一、回调函数</h3>
+    <p>在underscore的源码中，处处可见回调函数。比如each，迭代器就是。</p>
+    <h3>二、偏函数：</h3>
+    <p>定义：创建一个调用另外一个部分——参数或变量已经预置的哈素海产——的函数的用法。</p>
+    <pre>
+         var isType = function(type) {
+            return function(obj) {
+                return Object.prototype.toString.call(obj)  === "[object " + type+ "]";
+            }
+        }
+        var isString1 = isType("String");
+        var str = "cindy";
+        console.log(str + "'s type is String?", isString1(str));
+    </pre>
+    <p>通过指定部分参数来返回一个新的定制函数的形式就是偏函数。</p>
+    <h3>三、currying柯里化</h3>
+    <p>currying又称部分求值。一个currying会先接受一些函数参数，函数并不会立即执行未值，而是继续返回另一个函数，刚才传入的参数在函数形成闭包被保存起来。等函数被真正求值时，之前传入的函数参数，被一次性求值。</p>
+    <p>直接上代码：</p>
+    <pre>
+         //currying
+        var currying = function(fn) {
+            debugger;
+            var args = [];
+            return function() {
+                if (arguments.length === 0) {
+                    return fn.apply(this, args);
+                } else {
+                    Array.prototype.push.apply(args, arguments);
+                    return arguments.callee;
+                }
+            }
+        }
+
+        var cost = function(){
+            var sum = 0;
+            for (var i = 0, len = arguments.length; i< len; i ++) {
+                sum += arguments[i];
+            }
+            return sum;
+        }
+        cost = currying(cost);   // 运行currying， 这时 args是空的，只是返回了 34行的匿名函数，但没运行
+        cost(100);  // 运行 34行返回的匿名函数，参数为100， 这时，走的是38行， args = [100]
+        cost(200);    // 运行34行返回的匿名函数， 参数为200， 这时，走的还是38行， 这时args = [100, 200]  ， 闭包，让currying里的args不被回收
+        alert(cost());  //运行34行返回的匿名函数，参数为空，这时，走的是36行，调用了fn()， 这时args = [100, 200]， 调用cost函数， 返回sum为30
+    </pre>
+    <h3>事件节流</h3>
+    <p>事件可能会被不停地触发，但时间处理函数不需要每次都执行。</p>
+    <p>看代码：</p>
+    <pre>
+        function throttle(fn, interval) {
+            var doing = false;
+            return function(){
+                if (doing) {
+                    return;
+                }
+                doing = true;
+                fn.apply(this, arguments);
+                setTiemout(function(){
+                    doing = false;
+                }, interval);
+            }
+        }
+        window.onresize = throttle(function(){
+            console.log('execute');
+        }, 500);
+    </pre>
+    <p>上面的代码，就不解释了。可用于onscroll, mousemove等频繁被触发的事件。</p>
+    <h3>事件结束</h3>
+    <p>对于 某些可以频繁触发的事件，有时候，希望事件结束 后进行一系列操作。</p>
+    <pre>
+            // 事件结束
+            function debounce( fn, interval) {
+                var timer = null;
+                function delay() {
+                    var target = this;
+                    var args = arguments;
+                    return setTimeout(function(){
+                        fn.apply(target, args);
+                    }, interval);
+                }
+
+                return function(){
+                    if (timer) {
+                        clearTimeout(timer);
+                    }
+                    timer = delay.apply(this, arguments);
+                }
+            };
+
+            window.onscroll = debounce(function(){
+                console.log('scroll end');
+            }, 500);
+    </pre>
+</body>
+</html>
