@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>20180313_contains().html</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        var arr = [1, 2, 3];
+        var res1 = arr.includes(1);
+        var res2 = arr.includes(1, -1);  // index 为2, 即从3这个数开始找
+        var res3 = arr.includes(1, -100);  // 计算出来的索引 小于0，整个数据搜索
+        console.log('res1:' + res1);  // true
+        console.log('res2:' + res2);  // false
+        console.log('res3:' + res3);  //  ture
+    </script>
+    <script>
+        // underscore 的contains
+        var _ = {};
+        _.contains = _.includes = _.include = function (obj, item, formIndex, guard) {
+            if (!isArrayLike(obj)) {
+                // 如果是对象 ， 把对象 的所有值都 收集到数据里
+                obj = _.values(obj);
+            }
+            if (typeof fromIndex != 'number' || guard) {
+                // 默认从0， 第一位开始
+                formIndex = 0;
+            }
+            return _.indexOf(obj, item, formIndex) >= 0;
+        }
+    </script>
+</head>
+<body>
+    <h3>原生includes()</h3>
+    <ul>
+        <li>1. Array 数组方法</li>
+        <li>2. 判断一个数组是否包含<strong>一个</strong>指定的值，如果有，返回true。没有false。</li>
+        <li>3. arr.includes(searchElement, fromIndex)</li>
+        <li>4. searchElement 必须， 要查找的元素。</li>
+        <li>5. fromIndex， 可选。数组索引，如果是负数，则按升序从 array.length + fromIndex 的索引开始搜索。默认为 0。如果计算出的索引小于 0，则整个数组都会被搜索。</li>
+    </ul>
+    <pre>
+        var arr = [1, 2, 3];
+        var res1 = arr.includes(1);
+        var res2 = arr.includes(1, -1);  // index 为2, 即从3这个数开始找
+        var res3 = arr.includes(1, -100);  // 计算出来的索引 小于0，整个数据搜索
+        console.log('res1:' + res1);  // true
+        console.log('res2:' + res2);  // false
+        console.log('res3:' + res3);  //  ture
+    </pre>
+    <h3>underscore中的includes</h3>
+    <p>判断数组或对象中value值， 是否有一个元素满足 迭代函数中的条件。</p>
+    <p>满足返回true, 不然返回false。</p>
+    <p>如果是object,则忽略key值，只需要查找 vaule值 即可。</p>
+     <pre>
+         // underscore 的contains
+        var _ = {};
+        _.contains = _.includes = _.include = function (obj, item, formIndex, guard) {
+            if (!isArrayLike(obj)) {
+                // 如果是对象 ， 把对象 的所有值都 收集到数据里
+                obj = _.values(obj);
+            }
+            if (typeof fromIndex != 'number' || guard) {
+                // 默认从0， 第一位开始
+                formIndex = 0;
+            }
+            return _.indexOf(obj, item, formIndex) >= 0;
+        }
+     </pre>
+</body>
+</html>
